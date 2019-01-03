@@ -39,4 +39,3 @@ JOIN
   name_index
 ON
   address_index.donor_id = name_index.donor_id
-LIMIT 5
