@@ -33,6 +33,10 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 
+import numpy as np
+import jellyfish as jf   
+
+
 BLOCKING_QUERY = """
 WITH
   name_index AS (
@@ -41,7 +45,7 @@ WITH
     donor_id,
     name,
     address,
-    ARRAY_AGG(STRUCT(donor_id, name, address)) OVER (ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS name_candidates
+    ARRAY_AGG(STRUCT(donor_id, name, address)) OVER (ROWS BETWEEN 20 PRECEDING AND 20 FOLLOWING) AS name_candidates
   FROM (
     SELECT
       *
@@ -55,7 +59,7 @@ WITH
     donor_id,
     name,
     address,
-    ARRAY_AGG(STRUCT(donor_id, name, address)) OVER (ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING) AS address_candidates
+    ARRAY_AGG(STRUCT(donor_id, name, address)) OVER (ROWS BETWEEN 20 PRECEDING AND 20 FOLLOWING) AS address_candidates
   FROM (
     SELECT
       *
@@ -99,8 +103,6 @@ def comparator(element):
     """
     Extract similarity features
     """
-    import jellyfish as jf
-
     
     return {
         'donor_id1': element['record_a']['donor_id'],
@@ -116,7 +118,6 @@ def baseline_classifier(element):
     Simple voting classifier.
     * assumes an equal weighting for the different types of distance metrics. 
     """
-    import numpy as np
     
     votes = [
         element['jaro_name'] > 0.67,
