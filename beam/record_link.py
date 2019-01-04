@@ -16,11 +16,11 @@
 #
 
 """
-python beam.py --output anz-pso-nfaggian:dedup.classification \
-               --runner DataflowRunner \
-               --project anz-pso-nfaggian \
-               --temp_location gs://anz-pso-nfaggian/tmp/ \
-               --requirements_file requirements.txt
+python record_link.py --output anz-pso-nfaggian:dedup.classification \
+                      --runner DataflowRunner \
+                      --project anz-pso-nfaggian \
+                      --temp_location gs://anz-pso-nfaggian-dedup-beam/tmp/ \
+                      --requirements_file requirements.txt
 """
 
 from __future__ import absolute_import
