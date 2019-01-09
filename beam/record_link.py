@@ -124,9 +124,9 @@ def baseline_classifier(element):
         element['jaro_address'] > 0.67,
         element['damerau_name'] < 9,
         element['damerau_address'] < 9]
-    return {'donor_id1': str(element['donor_id1']), 
-            'donor_id2': str(element['donor_id2']), 
-            'classification': np.mean(votes)}          
+    return (str(element['donor_id1']), 
+            str(element['donor_id2']), 
+            np.mean(votes))          
 
 
 def run(argv=None):
