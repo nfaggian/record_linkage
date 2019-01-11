@@ -120,13 +120,11 @@ def baseline_classifier(element):
     """
     
     votes = [
-        element['jaro_name'] > 0.67,
-        element['jaro_address'] > 0.67,
-        element['damerau_name'] < 9,
-        element['damerau_address'] < 9]
-    return (str(element['donor_id1']), 
-            str(element['donor_id2']), 
-            np.mean(votes))          
+        element['jaro_name'] > 0.6725,
+        element['jaro_address'] > 0.7111]
+    return {'donor_id1':str(element['donor_id1']), 
+            'donor_id2': str(element['donor_id2']), 
+            'classification': np.mean(votes)}          
 
 
 def run(argv=None):
@@ -147,14 +145,11 @@ def run(argv=None):
     with beam.Pipeline(options=pipeline_options) as p:
 
         _ = (p 
-            | "query" >> beam.io.Read(beam.io.BigQuerySource(query=BLOCKING_QUERY, 
-                                                             #project=known_args.project, 
-                                                             use_standard_sql=True))
-            | "record generator" >> beam.ParDo(indexer())
-            | "feature extraction" >> beam.Map(lambda x: comparator(x)) 
-            | "duplicate classifier" >> beam.Map(lambda x: baseline_classifier(x)) 
-            # Need a cluster creation function here 
-            | "store" >> beam.io.Write(beam.io.BigQuerySink(known_args.output, 
+            | "read: blocking query" >> beam.io.Read(beam.io.BigQuerySource(query=BLOCKING_QUERY, use_standard_sql=True))
+            | "extract: candidate pairs" >> beam.ParDo(indexer())
+            | "calculate: similarity metrics" >> beam.Map(lambda x: comparator(x)) 
+            | "calculate: duplicate detector" >> beam.Map(lambda x: baseline_classifier(x)) 
+            | "store: classification table " >> beam.io.Write(beam.io.BigQuerySink(known_args.output, 
                                                             schema='donor_id1:STRING, donor_id2:STRING, classification:FLOAT', 
                                                             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED, 
                                                             write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE))

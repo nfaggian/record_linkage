@@ -42,3 +42,17 @@ LIMIT 50
 --   donations DESC
 -- LIMIT
 --   50
+
+-- how big are the clusters?
+SELECT 
+  cluster_id,
+  clusters.donor_id,
+  donors.name,
+  COUNT(*) AS cluster_size
+FROM 
+  clusters as clusters
+INNER JOIN dedup.processed_donors AS donors
+ON cluster_donor_id = donors.donor_id
+GROUP BY cluster_id, donor_id, donors.name
+ORDER BY cluster_size DESC
+LIMIT 10
