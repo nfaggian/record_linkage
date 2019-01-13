@@ -14,7 +14,7 @@ name_candidates AS (
       donor_id, 
       name
     FROM
-      dedup.processed_donors
+      record_link.processed_donors
     WHERE name IS NOT NULL
     ORDER BY name)
     ),
@@ -31,7 +31,7 @@ address_candidates AS (
       donor_id, 
       address
     FROM
-      dedup.processed_donors
+      record_link.processed_donors
     WHERE address IS NOT NULL
     ORDER BY address)
 )

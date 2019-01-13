@@ -5,7 +5,7 @@ WITH
       GENERATE_UUID() AS cluster_id,
       ARRAY_AGG(DISTINCT classification.donor_id2) AS cluster
     FROM
-      dedup.classification
+      record_link.classification
     WHERE
       classification.classification > 0.75
     GROUP BY
@@ -20,39 +20,3 @@ WITH
     CROSS JOIN
       UNNEST (cluster) AS cluster_donor_id
     )
-
-SELECT
-  cluster_id, 
-  cluster_donor_id,
-  donors.name,
-  contributions.amount AS donation,
-  contributions.date_recieved AS date,
-  contributions.contribution_id
-FROM
-  clusters 
-INNER JOIN dedup.processed_donors AS donors
-ON cluster_donor_id = donors.donor_id
-INNER JOIN dedup.contributions AS contributions
-ON cluster_donor_id = contributions.donor_id
-ORDER BY donation DESC
-LIMIT 50
--- GROUP BY
---   cluster_id, donors.name
--- ORDER BY
---   donations DESC
--- LIMIT
---   50
-
--- how big are the clusters?
-SELECT 
-  cluster_id,
-  clusters.donor_id,
-  donors.name,
-  COUNT(*) AS cluster_size
-FROM 
-  clusters as clusters
-INNER JOIN dedup.processed_donors AS donors
-ON cluster_donor_id = donors.donor_id
-GROUP BY cluster_id, donor_id, donors.name
-ORDER BY cluster_size DESC
-LIMIT 10
