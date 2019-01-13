@@ -50,7 +50,7 @@ WITH
     SELECT
       *
     FROM
-      dedup.processed_donors
+      record_link.processed_donors
     ORDER BY
       name) ),
   address_index AS (
@@ -64,7 +64,7 @@ WITH
     SELECT
       *
     FROM
-      dedup.processed_donors
+      record_link.processed_donors
     ORDER BY
       address) )
 SELECT
