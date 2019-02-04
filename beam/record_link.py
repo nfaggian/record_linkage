@@ -98,7 +98,8 @@ class indexer(beam.DoFn):
                        'record_b': {'donor_id': candidate['donor_id'], 
                                     'name': unicode(candidate['name']), 
                                     'address': unicode(candidate['address'])}}
-                
+
+
 def comparator(element):
     """
     Extract similarity features
@@ -118,7 +119,7 @@ def baseline_classifier(element):
     Simple voting classifier.
     * assumes an equal weighting for the different types of distance metrics. 
     """
-    
+
     votes = [
         element['jaro_name'] > 0.6725,
         element['jaro_address'] > 0.7111]
